@@ -4,9 +4,40 @@ include <../../OpenSCAD_Lib/chamferedCylinders.scad>
 firstLayerHeight = 0.2;
 layerHeight = 0.2;
 
+boardX = 36.37;;
+boardY = 20.32;
+
+standoffCtsOffsetUsbEndX = 2.0;
+standoffCtsOffsetUsbEndY = 2.4;
+
+standoffCtsOffsetAntennaEndX = 3.52;
+standoffCtsOffsetAntennaEndY = 1.97;
+
+screwHoleDia = 2.4; // m2 clearance
+
+extraXY = 3;
+wallXY = 3;
+wallZ = 3;
+
+cornerDIaXY = 8;
+exteriorCZ = 1;
+exteriorZ = 10;
+
+cornerCtrX = boardX/2 + extraXY;
+cornerCtrY = boardY/2 + extraXY;
+
 module itemModule()
 {
-	
+    difference()
+    {
+	// Exterior:
+    hull() doubleX() doubleY() translate([cornerCtrX, cornerCtrY, 0]) 
+        simpleChamferedCylinderDoubleEnded(d=cornerDIaXY, h=exteriorZ, cz=exteriorCZ);
+
+    // interior:
+    hull() doubleX() doubleY() translate([cornerCtrX, cornerCtrY, wallZ]) 
+        cylinder(d=cornerDIaXY-wallXY, h=100);
+    }
 }
 
 module clip(d=0)
