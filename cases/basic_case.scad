@@ -21,7 +21,7 @@ wallZ = 4;
 
 cornerDIaXY = 10;
 exteriorCZ = 1;
-exteriorZ = 7 + wallZ;
+exteriorZ = 8 + wallZ;
 
 cornerCtrX = boardX/2 + extraXY - cornerDIaXY/2;
 cornerCtrY = boardY/2 + extraXY - cornerDIaXY/2;
@@ -32,7 +32,11 @@ module itemModule()
     {
         cornerOffsetY = -12 - cornerDIaXY/2;
         // Exterior:
-        hull() cornerXform(offsetY=cornerOffsetY) simpleChamferedCylinderDoubleEnded(d=cornerDIaXY, h=exteriorZ, cz=exteriorCZ);
+        union()
+        {
+            hull() cornerXform(offsetY=cornerOffsetY) simpleChamferedCylinderDoubleEnded(d=cornerDIaXY, h=exteriorZ, cz=exteriorCZ);
+            hull() cornerXform() simpleChamferedCylinderDoubleEnded(d=cornerDIaXY, h=wallZ, cz=exteriorCZ);
+        }
 
         // interior:
         translate([0,0,wallZ]) hull() cornerXform(offsetY=cornerOffsetY) cylinder(d=cornerDIaXY-wallXY, h=100);
@@ -46,10 +50,8 @@ module itemModule()
 
         // Button and USB cut:
         cutX = boardX + 2;
-        tcu([-cutX/2, 0, -10], [cutX, 200, 200]);
+        tcu([-cutX/2, 0, wallZ], [cutX, 200, 200]);
     }
-
-    hull() cornerXform() simpleChamferedCylinderDoubleEnded(d=cornerDIaXY, h=wallZ, cz=exteriorCZ);
 }
 
 module cornerXform(offsetY=0)
