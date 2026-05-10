@@ -41,9 +41,12 @@ module itemModule()
         // Screw holes:
         standoffsXform(z=-10) cylinder(d=screwHoleDia, h=100);
 
-        // USB-C cutout:
-        usbCutX = 13;
-        tcu([-usbCutX/2, 0, wallZ], [usbCutX, 100, 100]);
+        // // USB-C cutout:
+        // usbCutX = 13;
+        // tcu([-usbCutX/2, 0, wallZ], [usbCutX, 100, 100]);
+
+        // Button and USB cut:
+        tcu([-100, boardY/2-12, wallZ], 200);
     }
 }
 
