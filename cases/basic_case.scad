@@ -30,35 +30,65 @@ module itemModule()
 {
     difference()
     {
-	// Exterior:
-    hull() doubleX() doubleY() translate([cornerCtrX, cornerCtrY, 0]) 
-        simpleChamferedCylinderDoubleEnded(d=cornerDIaXY, h=exteriorZ, cz=exteriorCZ);
+        // Exterior:
+        hull() doubleX() doubleY() translate([cornerCtrX, cornerCtrY, 0]) 
+            simpleChamferedCylinderDoubleEnded(d=cornerDIaXY, h=exteriorZ, cz=exteriorCZ);
 
-    // interior:
-    hull() doubleX() doubleY() translate([cornerCtrX, cornerCtrY, wallZ]) 
-        cylinder(d=cornerDIaXY-wallXY, h=100);
+        // interior:
+        hull() doubleX() doubleY() translate([cornerCtrX, cornerCtrY, wallZ]) 
+            cylinder(d=cornerDIaXY-wallXY, h=100);
 
-    // Screw holes:
+        // Screw holes:
+        standoffsXform(z=-10) cylinder(d=screwHoleDia, h=100);
+        // usbHoleCtrX = boardX/2 - standoffCtsOffsetUsbEndX;
+        // usbHoleCtrY = boardY/2 - standoffCtsOffsetUsbEndY;
+        // doubleX() translate([usbHoleCtrX, usbHoleCtrY, -10]) cylinder(d=screwHoleDia, h=100);
+
+        // antHoleCtrX = boardX/2 - standoffCtsOffsetAntennaEndX;
+        // antHoleCtrY = -boardY/2 + standoffCtsOffsetAntennaEndY;
+        // doubleX() translate([antHoleCtrX, antHoleCtrY, -10]) cylinder(d=screwHoleDia, h=100);
+    }
+}
+
+module standoffsXform(z)
+{
     usbHoleCtrX = boardX/2 - standoffCtsOffsetUsbEndX;
     usbHoleCtrY = boardY/2 - standoffCtsOffsetUsbEndY;
-    doubleX() translate([usbHoleCtrX, usbHoleCtrY, -10]) cylinder(d=screwHoleDia, h=100);
+    doubleX() translate([usbHoleCtrX, usbHoleCtrY, z]) children();
 
     antHoleCtrX = boardX/2 - standoffCtsOffsetAntennaEndX;
     antHoleCtrY = -boardY/2 + standoffCtsOffsetAntennaEndY;
-    doubleX() translate([antHoleCtrX, antHoleCtrY, -10]) cylinder(d=screwHoleDia, h=100);
-    }
+    doubleX() translate([antHoleCtrX, antHoleCtrY, z]) children();
 }
 
 module clip(d=0)
 {
-	//tc([-200, -400-d, -10], 400);
+	// tc([-200, -400-d, -10], 400);
 }
 
 if(developmentRender)
 {
 	display() itemModule();
+    displayGhost() boardGhost();
 }
 else
 {
 	itemModule();
+}
+
+module boardGhost()
+{
+    standoffZ = 2;
+
+    difference()
+    {
+        union()
+        {
+            hull() doubleX() doubleY() translate([boardX/2-1, boardY/2-1, wallZ + standoffZ]) cylinder(d=2, h=4);
+            standoffsXform(z=wallZ) cylinder(d=3.5, h=standoffZ);
+        }
+        
+        standoffsXform(z=-10) cylinder(d=2, h=100);
+    }
+    
 }
