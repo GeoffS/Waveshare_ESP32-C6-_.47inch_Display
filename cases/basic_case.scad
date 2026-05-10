@@ -17,11 +17,11 @@ screwHoleDia = 2.4; // m2 clearance
 
 extraXY = 4;
 wallXY = 3;
-wallZ = 3;
+wallZ = 4;
 
 cornerDIaXY = 10;
 exteriorCZ = 1;
-exteriorZ = 10;
+exteriorZ = 7 + wallZ;
 
 cornerCtrX = boardX/2 + extraXY - cornerDIaXY/2;
 cornerCtrY = boardY/2 + extraXY - cornerDIaXY/2;
@@ -30,12 +30,12 @@ module itemModule()
 {
     difference()
     {
+        cornerOffsetY = -12 - cornerDIaXY/2;
         // Exterior:
-        hull() cornerXform() simpleChamferedCylinderDoubleEnded(d=cornerDIaXY, h=exteriorZ, cz=exteriorCZ);
+        hull() cornerXform(offsetY=cornerOffsetY) simpleChamferedCylinderDoubleEnded(d=cornerDIaXY, h=exteriorZ, cz=exteriorCZ);
 
         // interior:
-        hull() doubleX() doubleY() translate([cornerCtrX, cornerCtrY, wallZ]) 
-            cylinder(d=cornerDIaXY-wallXY, h=100);
+        translate([0,0,wallZ]) hull() cornerXform(offsetY=cornerOffsetY) cylinder(d=cornerDIaXY-wallXY, h=100);
 
         // Screw holes:
         standoffsXform(z=-10) cylinder(d=screwHoleDia, h=100);
@@ -45,15 +45,17 @@ module itemModule()
         // tcu([-usbCutX/2, 0, wallZ], [usbCutX, 100, 100]);
 
         // Button and USB cut:
-        tcu([-100, boardY/2-12, -10], 200);
+        cutX = boardX + 2;
+        tcu([-cutX/2, 0, -10], [cutX, 200, 200]);
     }
 
     hull() cornerXform() simpleChamferedCylinderDoubleEnded(d=cornerDIaXY, h=wallZ, cz=exteriorCZ);
 }
 
-module cornerXform()
+module cornerXform(offsetY=0)
 {
-    doubleX() doubleY() translate([cornerCtrX, cornerCtrY, 0]) children();
+    doubleX() translate([cornerCtrX, -cornerCtrY, 0]) children();
+    doubleX() translate([cornerCtrX, cornerCtrY+offsetY, 0]) children();
 }
 
 module standoffsXform(z)
