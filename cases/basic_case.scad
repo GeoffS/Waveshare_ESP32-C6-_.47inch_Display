@@ -22,10 +22,13 @@ standoffZ = 2;
 
 cornerDIaXY = 10;
 exteriorCZ = 1;
+
+exteriorX = boardX + 2*extraXY;
+exteriorY = boardY + 2*extraXY;
 exteriorZ = 9 + wallZ + standoffZ;
 
-cornerCtrX = boardX/2 + extraXY - cornerDIaXY/2;
-cornerCtrY = boardY/2 + extraXY - cornerDIaXY/2;
+cornerCtrX = exteriorX/2 - cornerDIaXY/2;
+cornerCtrY = exteriorY/2 - cornerDIaXY/2;
 
 module itemModule()
 {
@@ -51,12 +54,24 @@ module itemModule()
         // Button and USB cut:
         cutX = boardX + 2;
         tcu([-cutX/2, 0, wallZ], [cutX, 200, 200]);
+
+        // Button access cuts:
+        buttonRecessDia = 15;
+        buttonRecessCZ = exteriorCZ;
+        // #doubleX() translate([exteriorX/2+buttonRecessDia/2, 0, -10]) cylinder(d=10, h=100);
+        doubleX() translate([boardX/2+buttonRecessDia/2+buttonRecessCZ, boardY/2-6.8, 0]) 
+        {
+            tcy([0,0,-10], d=buttonRecessDia, h=100);
+            d1 = buttonRecessDia + buttonRecessCZ + 2;
+            translate([0,0,-d1/2+buttonRecessDia/2+buttonRecessCZ]) cylinder(d1=d1, d2=0, h=d1/2);
+            translate([0,0,wallZ-buttonRecessDia/2-buttonRecessCZ]) cylinder(d2=d1, d1=0, h=d1/2);
+        }
     }
 
     // Standoffs:
     difference()
     {
-        standoffsXform(z=wallZ-nothing) simpleChamferedCylinder(d=6, h=standoffZ, cz=4*layerHeight);
+        standoffsXform(z=wallZ-nothing) simpleChamferedCylinder(d=5.5, h=standoffZ, cz=4*layerHeight);
         screwHoled();
     }
 }
